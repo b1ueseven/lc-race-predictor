@@ -3,6 +3,7 @@ def predict_400(
     pr_200,
     pr_400,
     recent_400,
+    relay_400_split,
     special_distance,
     special_time,
     fatigue,
@@ -11,16 +12,27 @@ def predict_400(
     estimates = []
 
     if pr_400 > 0:
-        estimates.append(("400 PR", pr_400, 0.30))
+        estimates.append(("400 PR", pr_400, 0.35))
 
     if recent_400 > 0:
-        estimates.append(("Recent 400", recent_400, 0.35))
+        estimates.append(("Recent 400", recent_400, 0.40))
+
+    if relay_400_split > 0:
+        relay_estimate = relay_400_split + 0.40
+
+        estimates.append(
+            (
+                "4x400 Relay Split Conversion",
+                relay_estimate,
+                0.25
+            )
+        )    
 
     if pr_200 > 0:
-        estimates.append(("200 Speed Conversion", (pr_200 * 2) + 5.8, 0.20))
+        estimates.append(("200 Speed Conversion", (pr_200 * 2) + 5.8, 0.10))
 
     if pr_100 > 0:
-        estimates.append(("100 Speed Conversion", (pr_100 * 4) + 7.2, 0.10))
+        estimates.append(("100 Speed Conversion", (pr_100 * 4) + 7.2, 0.05))
 
     if special_time > 0:
 

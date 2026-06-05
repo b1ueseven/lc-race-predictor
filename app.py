@@ -12,6 +12,11 @@ pr_200 = st.number_input("200m PR", min_value=0.0, step=0.01)
 pr_400 = st.number_input("Current 400m PR", min_value=0.0, step=0.01)
 
 recent_400 = st.number_input("Most Recent 400m", min_value=0.0, step=0.01)
+relay_400_split = st.number_input(
+    "Recent 4x400 Relay Split",
+    min_value=0.0,
+    step=0.01
+)
 special_distance = st.selectbox(
     "Recent Special Endurance Distance",
     [150, 200, 300]
@@ -40,6 +45,7 @@ if st.button("Predict 400m"):
         pr_200,
         pr_400,
         recent_400,
+        relay_400_split,
         special_distance,
         special_time,
         fatigue,
@@ -56,7 +62,7 @@ if st.button("Predict 400m"):
         confidence = min(95, len(estimates) * 20)
 
         st.subheader(f"Prediction for {name}")
-        st.metric("Projected 400m", f"{prediction:.2f}")
+        st.metric("Most Likely Race Time for 400m", f"{prediction:.2f}")
         st.metric("Confidence", f"{confidence}%")
         st.metric("Primary Limiter", limiter)
         st.write(f"Prediction Type: {prediction_type}")
