@@ -39,7 +39,7 @@ def predict_400(
             special_label = "300m Special Endurance Conversion"
             special_weight = 0.18
 
-    estimates.append((special_label, special_estimate, special_weight))
+        estimates.append((special_label, special_estimate, special_weight))
 
     if not estimates:
         return None
