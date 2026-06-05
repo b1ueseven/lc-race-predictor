@@ -121,7 +121,7 @@ if st.button("Predict 400m"):
             suggested_200 = None
             suggested_300 = None
 
-            if pr_200 > 0:
+            if pr_200 is not None:
                 if gap <= 0.75:
                     suggested_200 = pr_200 - 0.10
                 elif gap <= 1.5:
@@ -131,7 +131,7 @@ if st.button("Predict 400m"):
             else:
                 suggested_200 = (goal_400 - 5.8) / 2
 
-            if special_distance == 300 and special_time > 0:
+            if special_distance == 300 and special_time is not None:
                 if gap <= 0.75:
                     suggested_300 = special_time - 0.40
                 elif gap <= 1.5:
