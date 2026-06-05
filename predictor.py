@@ -11,13 +11,13 @@ def predict_400(
 ):
     estimates = []
 
-    if pr_400 > 0:
+    if pr_400 is not None:
         estimates.append(("400 PR", pr_400, 0.35))
 
-    if recent_400 > 0:
+    if recent_400 is not None:
         estimates.append(("Recent 400", recent_400, 0.40))
 
-    if relay_400_split > 0:
+    if relay_400_split is not None:
         relay_estimate = relay_400_split + 0.40
 
         estimates.append(
@@ -28,13 +28,13 @@ def predict_400(
             )
         )    
 
-    if pr_200 > 0:
+    if pr_200 is not None:
         estimates.append(("200 Speed Conversion", (pr_200 * 2) + 5.8, 0.10))
 
-    if pr_100 > 0:
+    if pr_100 is not None:
         estimates.append(("100 Speed Conversion", (pr_100 * 4) + 7.2, 0.05))
 
-    if special_time > 0:
+    if special_time is not None:
 
         if special_distance == 150:
             special_estimate = (special_time * 2.75) + 4.5
@@ -66,14 +66,12 @@ def predict_400(
 
     if prediction_type == "Championship/Tapered":
         prediction -= 0.30
-    elif prediction_type == "Long-Term Potential":
-        prediction -= 0.75
 
     confidence = min(95, len(estimates) * 20)
 
     limiter = "Balanced"
 
-    if pr_200 > 0 and pr_400 > 0:
+    if pr_200 is not None and pr_400 is not None:
 
         speed_projection = (pr_200 * 2) + 5.8
 
@@ -87,6 +85,16 @@ def predict_400(
 
         else:
             limiter = "Balanced"
+    if prediction_type == "Next Season Potential":
+
+        if limiter == "Speed Endurance":
+            prediction -= 1.10
+
+        elif limiter == "Top-End Speed/Max Velocity":
+            prediction -= 0.75
+
+        else:
+            prediction -= 0.90
 
     return {
         "prediction": prediction,

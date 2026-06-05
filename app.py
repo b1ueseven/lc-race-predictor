@@ -7,15 +7,41 @@ name = st.text_input("Athlete Name")
 
 
 
-pr_100 = st.number_input("100m PR", min_value=0.0, step=0.01)
-pr_200 = st.number_input("200m PR", min_value=0.0, step=0.01)
-pr_400 = st.number_input("Current 400m PR", min_value=0.0, step=0.01)
+pr_100 = st.number_input(
+    "100m PR",
+    min_value=0.0,
+    step=0.01,
+    value=None,
+    placeholder="Enter time"
+)
+pr_200 = st.number_input(
+    "200m PR",
+    min_value=0.0,
+    step=0.01,
+    value=None,
+    placeholder="Enter time"
+)
+pr_400 = st.number_input(
+    "Current 400m PR",
+    min_value=0.0,
+    step=0.01,
+    value=None,
+    placeholder="Enter time"
+)
 
-recent_400 = st.number_input("Most Recent 400m", min_value=0.0, step=0.01)
+recent_400 = st.number_input(
+    "Most Recent 400m",
+    min_value=0.0,
+    step=0.01,
+    value=None,
+    placeholder="Enter time"
+)
 relay_400_split = st.number_input(
     "Recent 4x400 Relay Split",
     min_value=0.0,
-    step=0.01
+    step=0.01,
+    value=None,
+    placeholder="Enter time"
 )
 special_distance = st.selectbox(
     "Recent Special Endurance Distance",
@@ -25,16 +51,24 @@ special_distance = st.selectbox(
 special_time = st.number_input(
     "Recent Special Endurance Time",
     min_value=0.0,
-    step=0.01
+    step=0.01,
+    value=None,
+    placeholder="Enter time"
 )
-goal_400 = st.number_input("Goal 400m Time", min_value=0.0, step=0.01)
+goal_400 = st.number_input(
+    "Goal 400m Time",
+    min_value=0.0,
+    step=0.01,
+    value=None,
+    placeholder="Enter time"
+)
 fatigue = st.slider("Fatigue Level", 1, 5, 3)
 prediction_type = st.selectbox(
     "Prediction Type",
     [
         "Current Fitness",
         "Championship/Tapered",
-        "Long-Term Potential"
+        "Next Season Potential"
     ]
 )
 
@@ -66,6 +100,11 @@ if st.button("Predict 400m"):
         st.metric("Confidence", f"{confidence}%")
         st.metric("Primary Limiter", limiter)
         st.write(f"Prediction Type: {prediction_type}")
+        if prediction_type == "Next Season Potential":
+            st.caption(
+                "Next Season Potential assumes consistent training, healthy development, and improvement of the athlete's primary limiter over roughly one year."
+            )
+        
         st.write(f"Likely range: **{prediction - 0.35:.2f} - {prediction + 0.35:.2f}**")
         st.caption("This is an estimate based on available marks, not a guarantee. Use it as a coaching reference point.")
 
@@ -74,7 +113,7 @@ if st.button("Predict 400m"):
         for label, value, weight in estimates:
             st.write(f"{label}: {value:.2f} (weight {weight:.0%})")
         
-        if goal_400 > 0:
+        if goal_400 is not None:
             st.subheader("Goal Time Targets")
 
             gap = prediction - goal_400
