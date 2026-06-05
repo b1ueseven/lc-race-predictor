@@ -12,7 +12,16 @@ pr_200 = st.number_input("200m PR", min_value=0.0, step=0.01)
 pr_400 = st.number_input("Current 400m PR", min_value=0.0, step=0.01)
 
 recent_400 = st.number_input("Most Recent 400m", min_value=0.0, step=0.01)
-workout_300 = st.number_input("Best Recent 300m Workout", min_value=0.0, step=0.01)
+special_distance = st.selectbox(
+    "Recent Special Endurance Distance",
+    [150, 200, 300]
+)
+
+special_time = st.number_input(
+    "Recent Special Endurance Time",
+    min_value=0.0,
+    step=0.01
+)
 goal_400 = st.number_input("Goal 400m Time", min_value=0.0, step=0.01)
 fatigue = st.slider("Fatigue Level", 1, 5, 3)
 prediction_type = st.selectbox(
@@ -31,7 +40,8 @@ if st.button("Predict 400m"):
         pr_200,
         pr_400,
         recent_400,
-        workout_300,
+        special_distance,
+        special_time,
         fatigue,
         prediction_type
     )
@@ -57,20 +67,43 @@ if st.button("Predict 400m"):
 
         for label, value, weight in estimates:
             st.write(f"{label}: {value:.2f} (weight {weight:.0%})")
+        
         if goal_400 > 0:
             st.subheader("Goal Time Targets")
 
-            goal_200 = (goal_400 - 5.8) / 2
-            goal_100 = (goal_400 - 7.2) / 4
-            goal_300 = goal_400 - 12.5
-
-            st.write(f"To target **{goal_400:.2f}**, rough supporting marks could be:")
-
-            st.write(f"100m speed: around **{goal_100:.2f}**")
-            st.write(f"200m speed: around **{goal_200:.2f}**")
-            st.write(f"300m workout: around **{goal_300:.2f}**")
-
             gap = prediction - goal_400
+
+            suggested_200 = None
+            suggested_300 = None
+
+            if pr_200 > 0:
+                if gap <= 0.75:
+                    suggested_200 = pr_200 - 0.10
+                elif gap <= 1.5:
+                    suggested_200 = pr_200 - 0.20
+                else:
+                    suggested_200 = pr_200 - 0.35
+            else:
+                suggested_200 = (goal_400 - 5.8) / 2
+
+            if special_distance == 300 and special_time > 0:
+                if gap <= 0.75:
+                    suggested_300 = special_time - 0.40
+                elif gap <= 1.5:
+                    suggested_300 = special_time - 0.80
+                else:
+                    suggested_300 = special_time - 1.20
+            else:
+                suggested_300 = goal_400 - 12.5
+
+            st.write(f"To target **{goal_400:.2f}**, the most useful supporting marks are likely:")
+
+            st.write(f"200m speed: around **{suggested_200:.2f}**")
+            st.write(f"300m special endurance: around **{suggested_300:.2f}**")
+
+            st.caption(
+                "These are development targets based on the athlete's current profile, not strict requirements."
+            )
 
             if gap <= 0:
                 st.success("This goal is within or below the current projection range.")

@@ -3,7 +3,8 @@ def predict_400(
     pr_200,
     pr_400,
     recent_400,
-    workout_300,
+    special_distance,
+    special_time,
     fatigue,
     prediction_type
 ):
@@ -21,8 +22,24 @@ def predict_400(
     if pr_100 > 0:
         estimates.append(("100 Speed Conversion", (pr_100 * 4) + 7.2, 0.10))
 
-    if workout_300 > 0:
-        estimates.append(("300 Workout Conversion", workout_300 + 12.5, 0.15))
+    if special_time > 0:
+
+        if special_distance == 150:
+            special_estimate = (special_time * 2.75) + 4.5
+            special_label = "150m Special Endurance Conversion"
+            special_weight = 0.08
+
+        elif special_distance == 200:
+            special_estimate = (special_time * 2) + 5.8
+            special_label = "200m Special Endurance Conversion"
+            special_weight = 0.12
+
+        elif special_distance == 300:
+            special_estimate = special_time + 12.5
+            special_label = "300m Special Endurance Conversion"
+            special_weight = 0.18
+
+    estimates.append((special_label, special_estimate, special_weight))
 
     if not estimates:
         return None
