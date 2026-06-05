@@ -1,4 +1,5 @@
 import streamlit as st
+from predictor import predict_400
 
 st.title("Lewis & Clark 400m Predictor")
 
@@ -25,42 +26,29 @@ prediction_type = st.selectbox(
 
 if st.button("Predict 400m"):
 
-    estimates = []
+    result = predict_400(
+        pr_100,
+        pr_200,
+        pr_400,
+        recent_400,
+        workout_300,
+        fatigue,
+        prediction_type
+    )
 
-    if pr_400 > 0:
-        estimates.append(("400 PR", pr_400, 0.30))
-
-    if recent_400 > 0:
-        estimates.append(("Recent 400", recent_400, 0.35))
-
-    if pr_200 > 0:
-        estimates.append(("200 Speed Conversion", (pr_200 * 2) + 5.8, 0.20))
-
-    if pr_100 > 0:
-        estimates.append(("100 Speed Conversion", (pr_100 * 4) + 7.2, 0.10))
-
-    if workout_300 > 0:
-        estimates.append(("300 Workout Conversion", workout_300 + 12.5, 0.15))
-    if not estimates:
+    if result is None:
         st.warning("Enter at least one mark to predict.")
     else:
-        weighted_total = sum(value * weight for label, value, weight in estimates)
-        weight_total = sum(weight for label, value, weight in estimates)
-
-        prediction = weighted_total / weight_total
-
-        fatigue_adjustment = (fatigue - 3) * 0.25
-        prediction += fatigue_adjustment
-        if prediction_type == "Championship/Tapered":
-            prediction -= 0.30
-
-        elif prediction_type == "Long-Term Potential":
-            prediction -= 0.75
+        prediction = result["prediction"]
+        confidence = result["confidence"]
+        estimates = result["estimates"]
+        limiter = result["limiter"]
         confidence = min(95, len(estimates) * 20)
 
         st.subheader(f"Prediction for {name}")
         st.metric("Projected 400m", f"{prediction:.2f}")
         st.metric("Confidence", f"{confidence}%")
+        st.metric("Primary Limiter", limiter)
         st.write(f"Prediction Type: {prediction_type}")
         st.write(f"Likely range: **{prediction - 0.35:.2f} - {prediction + 0.35:.2f}**")
         st.caption("This is an estimate based on available marks, not a guarantee. Use it as a coaching reference point.")
